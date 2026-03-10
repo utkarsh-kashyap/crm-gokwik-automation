@@ -4,31 +4,6 @@
 
 A production-grade end-to-end automation framework for the CRM Admin dashboard — Products module. Built with a dual-layer approach: Playwright spec files for technical depth and Cucumber BDD for business-readable scenarios, both sharing the same Page Object layer.
 
----
-
-## 📸 Screenshots
-
-Place screenshots in a `docs/screenshots/` folder at the project root.
-
-| What to capture | Suggested filename |
-|---|---|
-| Full Playwright test run passing in terminal | `docs/screenshots/playwright-run.png` |
-| Playwright HTML report overview | `docs/screenshots/playwright-report.png` |
-| Allure report dashboard | `docs/screenshots/allure-dashboard.png` |
-| Allure report — test detail with steps | `docs/screenshots/allure-detail.png` |
-| Cucumber smoke run in terminal | `docs/screenshots/cucumber-smoke.png` |
-| Cucumber HTML report | `docs/screenshots/cucumber-report.png` |
-| GitHub Actions smoke pipeline passing | `docs/screenshots/ci-smoke.png` |
-| GitHub Actions regression pipeline | `docs/screenshots/ci-regression.png` |
-| Failure screenshot (on-failure capture) | `docs/screenshots/failure-screenshot.png` |
-
-Once captured, add them inline in this README:
-```markdown
-![Playwright Run](docs/screenshots/playwright-run.png)
-![Allure Dashboard](docs/screenshots/allure-dashboard.png)
-![Cucumber Run](docs/screenshots/cucumber-smoke.png)
-![CI Pipeline](docs/screenshots/ci-smoke.png)
-```
 
 ---
 
