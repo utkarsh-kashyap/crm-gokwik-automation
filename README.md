@@ -396,8 +396,12 @@ Each test:
 
 | Pipeline | Trigger | What runs | Expected time |
 |---|---|---|---|
-| `smoke.yml` | Every PR to any branch | `@smoke` tagged Playwright tests | ~5 min |
+| `smoke.yml` | Every PR to any branch | `@smoke` tagged Playwright tests | ~7 min |
+| `crud.yml` | Every PR to any branch | `test name based` tagged Playwright tests | ~4 min |
 | `regression.yml` | Push to `main` branch | Full Playwright suite + Cucumber | ~20 min |
+
+<img width="1857" height="930" alt="image" src="https://github.com/user-attachments/assets/6d80130e-da3e-4d42-8186-768f12d43921" />
+
 
 ### GitHub Secrets Required
 
