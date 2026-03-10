@@ -1,4 +1,4 @@
-name: Smoke Tests
+name: CRUD Sanity
 
 on:
   workflow_dispatch:
@@ -12,8 +12,8 @@ on:
           - qa
 
 jobs:
-  smoke:
-    name: Smoke Tests — Playwright
+  crud-sanity:
+    name: CRUD Sanity — Login · Create · Update · Delete
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -33,19 +33,19 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run smoke tests
+      - name: Run CRUD sanity tests
         env:
           BASE_URL:       ${{ secrets.BASE_URL }}
           LOGIN_EMAIL:    ${{ secrets.LOGIN_EMAIL }}
           LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
           LOGIN_OTP:      ${{ secrets.LOGIN_OTP }}
           MERCHANT_ID:    ${{ secrets.MERCHANT_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           HEADLESS:       true
           SLOW_MO:        0
-          CI:             true
         run: |
           npx playwright test \
-            --grep @smoke \
+            --grep "TC_AUTH_001|TC_PRD_CREATE_001|TC_PRD_UPDATE_001|TC_PRD_DELETE_001" \
             --workers=1 \
             --reporter=list
 
@@ -53,7 +53,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: smoke-playwright-report
+          name: crud-playwright-report
           path: playwright-report/
           retention-days: 7
 
@@ -61,6 +61,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: smoke-failure-artifacts
+          name: crud-failure-artifacts
           path: test-results/
           retention-days: 7

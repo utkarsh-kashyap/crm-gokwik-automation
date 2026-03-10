@@ -3,21 +3,27 @@ name: Regression Suite
 on:
   workflow_dispatch:
     inputs:
-      tags:
-        description: 'Test tag to run (e.g. @products, @auth). Leave empty for full suite.'
+      environment:
+        description: 'Environment to run against'
         required: false
-        default: ''
+        default: 'qa'
+        type: choice
+        options:
+          - qa
+      run_cucumber:
+        description: 'Run Cucumber BDD suite as well?'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
   regression:
-    name: Regression Tests (Playwright + Cucumber)
+    name: Regression — Playwright + Cucumber
     runs-on: ubuntu-latest
     timeout-minutes: 60
-
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2]  # Parallel sharding for speed
 
     steps:
       - name: Checkout code
@@ -35,64 +41,62 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run Playwright regression (shard ${{ matrix.shard }}/2)
-        run: |
-          if [ -n "${{ github.event.inputs.tags }}" ]; then
-            npx playwright test --grep "${{ github.event.inputs.tags }}" --shard=${{ matrix.shard }}/2
-          else
-            npx playwright test --shard=${{ matrix.shard }}/2
-          fi
+      - name: Run Playwright regression suite
         env:
-          BASE_URL:          ${{ secrets.BASE_URL }}
-          LOGIN_EMAIL:       ${{ secrets.LOGIN_EMAIL }}
-          LOGIN_PASSWORD:    ${{ secrets.LOGIN_PASSWORD }}
-          LOGIN_OTP:         ${{ secrets.LOGIN_OTP }}
-          MERCHANT_ID:       ${{ secrets.MERCHANT_ID }}
-          OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
-          HEADLESS:          true
-          CI:                true
+          BASE_URL:       ${{ secrets.BASE_URL }}
+          LOGIN_EMAIL:    ${{ secrets.LOGIN_EMAIL }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+          LOGIN_OTP:      ${{ secrets.LOGIN_OTP }}
+          MERCHANT_ID:    ${{ secrets.MERCHANT_ID }}
+          HEADLESS:       true
+          SLOW_MO:        0
+          CI:             true
+        run: |
+          npx playwright test \
+            --workers=1 \
+            --reporter=list
 
       - name: Run Cucumber BDD suite
-        if: matrix.shard == 1  # Only run Cucumber on one shard
-        run: npm run cucumber
+        if: ${{ github.event.inputs.run_cucumber == 'true' }}
         env:
-          BASE_URL:          ${{ secrets.BASE_URL }}
-          LOGIN_EMAIL:       ${{ secrets.LOGIN_EMAIL }}
-          LOGIN_PASSWORD:    ${{ secrets.LOGIN_PASSWORD }}
-          LOGIN_OTP:         ${{ secrets.LOGIN_OTP }}
-          MERCHANT_ID:       ${{ secrets.MERCHANT_ID }}
-          OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
-          HEADLESS:          true
-          CI:                true
+          BASE_URL:       ${{ secrets.BASE_URL }}
+          LOGIN_EMAIL:    ${{ secrets.LOGIN_EMAIL }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+          LOGIN_OTP:      ${{ secrets.LOGIN_OTP }}
+          MERCHANT_ID:    ${{ secrets.MERCHANT_ID }}
+          HEADLESS:       true
+          SLOW_MO:        0
+          CI:             true
+        run: npm run cucumber
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: regression-playwright-report-shard-${{ matrix.shard }}
+          name: regression-playwright-report
           path: playwright-report/
           retention-days: 14
 
-      - name: Upload Allure results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: allure-results-shard-${{ matrix.shard }}
-          path: allure-results/
-          retention-days: 14
-
       - name: Upload Cucumber report
+        if: always() && ${{ github.event.inputs.run_cucumber == 'true' }}
         uses: actions/upload-artifact@v4
-        if: always() && matrix.shard == 1
         with:
-          name: cucumber-report
+          name: regression-cucumber-report
           path: reports/cucumber-report.html
           retention-days: 14
 
-      - name: Upload failure artifacts
+      - name: Upload Allure results
+        if: always()
         uses: actions/upload-artifact@v4
-        if: failure()
         with:
-          name: failure-artifacts-shard-${{ matrix.shard }}
+          name: regression-allure-results
+          path: allure-results/
+          retention-days: 14
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-failure-artifacts
           path: test-results/
           retention-days: 7
