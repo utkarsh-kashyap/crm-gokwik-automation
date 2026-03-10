@@ -155,8 +155,10 @@ export class ProductFormPage extends BasePage {
     await this.deletedSuccessToast.waitFor({ state: 'visible', timeout: config.timeouts.toast });
     this.log.info('Product deleted from detail page');
 
-    // Auto-navigates back to listing
+    // Wait for auto-navigation back to listing and for it to fully settle
     await this.page.waitForURL(/\/products$/, { timeout: config.timeouts.navigation });
+    await this.page.waitForLoadState('networkidle', { timeout: config.timeouts.navigation });
+    await this.waitForLoaderToDisappear();
   }
 
   // ─── Utilities ─────────────────────────────

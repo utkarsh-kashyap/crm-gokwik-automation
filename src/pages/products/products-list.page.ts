@@ -55,19 +55,28 @@ export class ProductsListPage extends BasePage {
    */
   async searchProduct(productName: string): Promise<void> {
     logStep('Search product', productName);
-    // Clear first to avoid stale value triggering wrong search
     await this.searchInput.waitFor({ state: 'visible', timeout: config.timeouts.default });
     await this.searchInput.clear();
-    await this.page.waitForTimeout(300);
+
+    // Register listener BEFORE fill — fill triggers search instantly and the
+    // response can arrive before the promise is set up if registered after
+    const searchResponsePromise = this.page.waitForResponse(
+      res => res.url().includes('products') && res.status() === 200,
+      { timeout: config.timeouts.default }
+    );
     await this.safeFill(this.searchInput, productName, 'Search input');
-    // Wait for debounce (~0.5-1s) + network + render to settle
-    await this.page.waitForTimeout(2000);
+    await searchResponsePromise;
+
     await this.waitForLoaderToDisappear();
   }
 
   async clearSearch(): Promise<void> {
+    const searchResponsePromise = this.page.waitForResponse(
+      res => res.url().includes('products') && res.status() === 200,
+      { timeout: config.timeouts.default }
+    );
     await this.searchInput.clear();
-    await this.page.waitForTimeout(1500);
+    await searchResponsePromise;
     await this.waitForLoaderToDisappear();
   }
 

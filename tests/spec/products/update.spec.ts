@@ -26,7 +26,7 @@ test.describe('@regression @products @update Update Product', () => {
     await formPage.fillTitle(updatedName);
     await formPage.submitSaveChanges();
 
-    // Verify updated name in listing
+    // Navigate to fresh listing before asserting
     await listPage.goto();
     await listPage.searchProduct(updatedName);
     await listPage.expectProductVisible(updatedName);

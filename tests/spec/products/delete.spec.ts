@@ -17,13 +17,10 @@ test.describe('@regression @products @delete Delete Product — From Detail Page
     await listPage.searchProduct(existingProduct.name);
     await listPage.clickProduct(existingProduct.name);
 
-    // Delete from detail — no confirmation modal, direct delete
+    // Delete from detail — auto-navigates back to listing once done
     await formPage.deleteFromDetailPage();
 
-    // Should auto-navigate back to listing
-    await listPage.expectOnProductsPage();
-
-    // Search confirms product is gone
+    // Already on listing — search directly to confirm product is gone
     await listPage.searchProduct(existingProduct.name);
     await listPage.expectNoDataVisible();
   });

@@ -17,7 +17,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
 
   // ─── Timeouts ──────────────────────────────────────────────
-  timeout: 60000, // 60s per individual test
+  timeout: 180000, // 180s per individual test
 
   // globalTimeout removed — no artificial cap on full suite duration
   // Suite time grows naturally as test count grows

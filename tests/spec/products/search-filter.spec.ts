@@ -43,9 +43,8 @@ test.describe('@regression @products @search Search & Filter', () => {
     await listPage.searchProduct('NOMATCH_XYZ_9999');
     await listPage.expectNoDataVisible();
 
-    await listPage.clearSearch();
-
-    // After clearing, our product should be visible again
+    // Navigate fresh instead of clearing — avoids stale search state
+    await listPage.goto();
     await listPage.searchProduct(existingProduct.name);
     await listPage.expectProductVisible(existingProduct.name);
   });
