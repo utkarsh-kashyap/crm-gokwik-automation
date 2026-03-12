@@ -4,31 +4,6 @@
 
 A production-grade end-to-end automation framework for the CRM Admin dashboard — Products module. Built with a dual-layer approach: Playwright spec files for technical depth and Cucumber BDD for business-readable scenarios, both sharing the same Page Object layer.
 
----
-
-## 📸 Screenshots
-
-Place screenshots in a `docs/screenshots/` folder at the project root.
-
-| What to capture | Suggested filename |
-|---|---|
-| Full Playwright test run passing in terminal | `docs/screenshots/playwright-run.png` |
-| Playwright HTML report overview | `docs/screenshots/playwright-report.png` |
-| Allure report dashboard | `docs/screenshots/allure-dashboard.png` |
-| Allure report — test detail with steps | `docs/screenshots/allure-detail.png` |
-| Cucumber smoke run in terminal | `docs/screenshots/cucumber-smoke.png` |
-| Cucumber HTML report | `docs/screenshots/cucumber-report.png` |
-| GitHub Actions smoke pipeline passing | `docs/screenshots/ci-smoke.png` |
-| GitHub Actions regression pipeline | `docs/screenshots/ci-regression.png` |
-| Failure screenshot (on-failure capture) | `docs/screenshots/failure-screenshot.png` |
-
-Once captured, add them inline in this README:
-```markdown
-![Playwright Run](docs/screenshots/playwright-run.png)
-![Allure Dashboard](docs/screenshots/allure-dashboard.png)
-![Cucumber Run](docs/screenshots/cucumber-smoke.png)
-![CI Pipeline](docs/screenshots/ci-smoke.png)
-```
 
 ---
 
@@ -99,6 +74,7 @@ crm-automation/
 ├── .github/
 │   └── workflows/
 │       ├── smoke.yml              # Triggered on every PR — runs @smoke tests
+|       ├── crud.yml               # Triggered on every PR — runs basic crud operation tests
 │       └── regression.yml         # Triggered on push to main — full suite
 │
 ├── cucumber.js                    # Cucumber root config (CommonJS bootstrap)
@@ -209,6 +185,9 @@ Opens the built-in Playwright HTML report in your browser. Shows each test with:
 - Video recording on failure
 - Full trace file for debugging
 
+- <img width="1301" height="940" alt="image" src="https://github.com/user-attachments/assets/169336af-0a05-4f29-8f08-466f2c89fd6a" />
+
+
 ### Allure Report
 
 ```bash
@@ -229,12 +208,18 @@ Allure report includes:
 - Test duration and trends
 - Suite grouping by tag
 
+- <img width="1906" height="945" alt="image" src="https://github.com/user-attachments/assets/48f7cd68-dc28-4d84-adeb-63de71a17ec9" />
+
+
 ### Cucumber HTML Report
 
 After any cucumber run, open:
 ```
 reports/cucumber-report.html
 ```
+
+<img width="1603" height="949" alt="image" src="https://github.com/user-attachments/assets/a58c4b9c-d400-4ec7-a9bc-d67c21ecf605" />
+
 
 ### Clean all generated reports manually
 
@@ -396,8 +381,12 @@ Each test:
 
 | Pipeline | Trigger | What runs | Expected time |
 |---|---|---|---|
-| `smoke.yml` | Every PR to any branch | `@smoke` tagged Playwright tests | ~5 min |
+| `smoke.yml` | Every PR to any branch | `@smoke` tagged Playwright tests | ~7 min |
+| `crud.yml` | Every PR to any branch | `test name based` tagged Playwright tests | ~4 min |
 | `regression.yml` | Push to `main` branch | Full Playwright suite + Cucumber | ~20 min |
+
+<img width="1857" height="930" alt="image" src="https://github.com/user-attachments/assets/6d80130e-da3e-4d42-8186-768f12d43921" />
+
 
 ### GitHub Secrets Required
 
@@ -410,6 +399,7 @@ Add these under `Settings → Secrets and variables → Actions` in your GitHub 
 | `LOGIN_PASSWORD` | Test account password |
 | `LOGIN_OTP` | OTP value for test environment |
 | `MERCHANT_ID` | Merchant ID to switch to after login |
+| `OPENAI_API_KEY` | OpenAI API key for AI Error Analyzer  |
 
 ---
 
