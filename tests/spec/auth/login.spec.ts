@@ -19,7 +19,7 @@ test.describe('@smoke @auth Login Flow', () => {
   test('@smoke @auth TC_AUTH_003 — Next button enables after email is entered', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.navigateToLogin();
-    await page.fill(`//input[@name='email']`, config.auth.email);
+    await loginPage.fillEmail(config.auth.email);
     await loginPage.expectNextButtonEnabled();
   });
 
@@ -44,8 +44,8 @@ test.describe('@regression @auth Login — Negative Scenarios', () => {
     await loginPage.submitEmailAndPassword(config.auth.email, 'WrongPassword!999');
 
     // Should NOT show OTP screen after wrong password
-    const otpInput = page.locator(`//*[normalize-space()='Enter OTP']//input[@type='text']`);
-    await expect(otpInput).toHaveCount(0);
+    const otpPresent = await loginPage.isOtpPresent();
+    expect(otpPresent).toBeFalsy();
   });
 
   test('@regression @auth TC_AUTH_007 — wrong OTP stays on OTP screen', async ({ page }) => {

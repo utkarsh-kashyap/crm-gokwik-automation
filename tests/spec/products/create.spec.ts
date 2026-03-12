@@ -12,8 +12,8 @@ async function cleanup(page: any, productName: string) {
     const formPage = new ProductFormPage(page);
     await listPage.goto();
     await listPage.searchProduct(productName);
-    const exists = await page.locator(`//a[normalize-space()='${productName}']`).count();
-    if (exists > 0) {
+    const exists = await listPage.isProductPresent(productName);
+    if (exists) {
       await listPage.clickProduct(productName);
       await formPage.deleteFromDetailPage();
     }

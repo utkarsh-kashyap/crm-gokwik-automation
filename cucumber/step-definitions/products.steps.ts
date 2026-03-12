@@ -38,8 +38,7 @@ When('I enter my password and click Next', async function (this: CRMWorld) {
   await loginPage.submitEmailAndPassword(config.auth.email, config.auth.password);
   // submitEmailAndPassword re-submits email internally — for step isolation
   // we just enter password here via page directly
-  const pwInput = this.page.locator(`//input[@type='password']`);
-  await pwInput.waitFor({ state: 'visible' }).catch(() => {});
+  await loginPage.expectPasswordVisible();
 });
 
 When('I enter the OTP and click Next', async function (this: CRMWorld) {

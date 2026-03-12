@@ -31,7 +31,7 @@ test.describe('@regression @products @network Network Resilience', () => {
       }
     });
 
-    await authenticatedPage.locator(`//button[@data-test-id='create_product_submit_button']`).click();
+    await formPage.clickCreateButton();
     await authenticatedPage.waitForLoadState('networkidle');
 
     // Should stay on create page — not navigate to a product ID URL
@@ -61,7 +61,7 @@ test.describe('@regression @products @network Network Resilience', () => {
       }
     });
 
-    await authenticatedPage.locator(`//button[@data-test-id='create_product_submit_button']`).click();
+    await formPage.clickCreateButton();
     await authenticatedPage.waitForLoadState('networkidle').catch(() => {});
 
     // Page must not crash — still on products URL

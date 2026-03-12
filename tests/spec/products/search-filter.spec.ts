@@ -75,9 +75,8 @@ test.describe('@regression @products @pagination Pagination', () => {
 
     await listPage.goto();
 
-    // Verify the listing has loaded with products (1771 total — always has rows)
-    const productLinks = authenticatedPage.locator(`//a[contains(@href,'/products/') and @class='product-link']`);
-    const count = await productLinks.count();
+    // Verify the listing has loaded with products
+    const count = await listPage.getProductLinksCount();
     expect(count, 'Products listing should have at least one product row').toBeGreaterThan(0);
   });
 
@@ -88,10 +87,9 @@ test.describe('@regression @products @pagination Pagination', () => {
 
     await listPage.goto();
 
-    // Next button should be present given 1771 products with 10 per page
-    // 🔧 Replace with actual next page button XPath once confirmed
-    const nextBtn = authenticatedPage.locator(`//*[text()='Next']/parent::button`);
-    await expect(nextBtn, 'Next page button should be present').toBeVisible();
+    // Next button should be present given many products
+    const nextVisible = await listPage.isNextButtonVisible();
+    expect(nextVisible, 'Next page button should be present').toBeTruthy();
   });
 
   test('@regression @products @pagination TC_PRD_PAGE_003 — page shows 10 items by default', async ({
@@ -101,8 +99,7 @@ test.describe('@regression @products @pagination Pagination', () => {
 
     await listPage.goto();
 
-    const productLinks = authenticatedPage.locator(`//a[contains(@href,'/products/') and @class='product-link']`);
-    const count = await productLinks.count();
+    const count = await listPage.getProductLinksCount();
     expect(count, 'Default page size should show 10 products').toBeLessThanOrEqual(10);
   });
 

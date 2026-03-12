@@ -168,4 +168,67 @@ export class ProductsListPage extends BasePage {
   async expectOnProductsPage(): Promise<void> {
     await expect(this.page).toHaveURL(/\/products/, { timeout: config.timeouts.navigation });
   }
+
+  /**
+   * Returns true if the product row exists in the current listing.
+   * Note: does not assert visibility — useful for conditional cleanup flows.
+   */
+  async isProductPresent(productName: string): Promise<boolean> {
+    try {
+      // Ensure listing is settled after any previous search/navigation
+      await this.waitForLoaderToDisappear();
+      const count = await this.productRowLink(productName).count();
+      return count > 0;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Opens bulk delete flow for the given product and waits for confirmation modal.
+   */
+  async openBulkDeleteConfirmation(productName: string): Promise<void> {
+    logStep('Open bulk delete confirmation', productName);
+    await this.searchProduct(productName);
+    await this.expectProductVisible(productName);
+
+    const checkboxes = this.productCheckboxes;
+    await checkboxes.nth(1).click();
+
+    await this.safeClick(this.bulkMoreActionsButton, 'Bulk more actions button');
+    await this.deleteProductsOption.waitFor({ state: 'visible', timeout: config.timeouts.default });
+    await this.safeClick(this.deleteProductsOption, 'Delete products option');
+
+    await this.deleteConfirmModal.waitFor({ state: 'visible', timeout: config.timeouts.default });
+  }
+
+  async isDeleteConfirmationVisible(): Promise<boolean> {
+    try {
+      return await this.deleteConfirmModal.isVisible();
+    } catch {
+      return false;
+    }
+  }
+
+  async cancelDeleteModal(): Promise<void> {
+    await this.safeClick(this.deleteCancelButton, 'Cancel button in delete modal');
+    await this.deleteConfirmModal.waitFor({ state: 'hidden', timeout: config.timeouts.default });
+  }
+
+  /**
+   * Returns the number of product row links in the current listing page.
+   */
+  async getProductLinksCount(): Promise<number> {
+    const links = this.page.locator('a.product-link');
+    return await links.count();
+  }
+
+  async isNextButtonVisible(): Promise<boolean> {
+    try {
+      const nextBtn = this.page.locator('button:has-text("Next")');
+      return await nextBtn.isVisible();
+    } catch {
+      return false;
+    }
+  }
 }

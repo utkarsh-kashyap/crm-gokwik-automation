@@ -64,6 +64,19 @@ export class LoginPage extends BasePage {
     await this.safeClick(this.nextButton, 'Next (after OTP)');
   }
 
+  async fillEmail(email: string): Promise<void> {
+    await this.navigateToLogin();
+    await this.safeFill(this.emailInput, email, 'Email input');
+  }
+
+  async isOtpPresent(): Promise<boolean> {
+    try {
+      return await this.otpInput.count() > 0;
+    } catch {
+      return false;
+    }
+  }
+
   // ─── Assertions ────────────────────────────
 
   async expectNextButtonDisabled(): Promise<void> {

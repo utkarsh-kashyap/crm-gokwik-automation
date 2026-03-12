@@ -82,29 +82,11 @@ test.describe('@regression @products @delete Delete Product — Bulk Delete from
     await listPage.searchProduct(existingProduct.name);
     await listPage.expectProductVisible(existingProduct.name);
 
-    // Select checkbox
-    const checkboxes = authenticatedPage.locator(`//input[@type='checkbox']`);
-    await checkboxes.nth(1).click();
-
-    // Open more actions
-    const moreActionsBtn = authenticatedPage.locator(
-      `//button[@data-test-id='bulk_action_toolbar_more_actions_button']`
-    );
-    await moreActionsBtn.click();
-
-    const deleteOption = authenticatedPage.locator(`//span[normalize-space()='Delete products']`);
-    await deleteOption.waitFor({ state: 'visible' });
-    await deleteOption.click();
-
-    // Confirmation modal must appear — product not yet deleted
-    const modal = authenticatedPage.locator(`//*[contains(text(),'Are you sure you want to delete')]`);
-    await expect(modal, 'Confirmation modal must appear before deletion').toBeVisible();
-
-    // Cancel to avoid deleting (fixture handles cleanup)
-    const cancelBtn = authenticatedPage.locator(
-      `//div[contains(@class,'delete-products-modal')]//span[text()='Cancel']/ancestor::button`
-    );
-    await cancelBtn.click();
+    // Use POM helpers to open bulk delete confirmation and cancel
+    await listPage.openBulkDeleteConfirmation(existingProduct.name);
+    const visible = await listPage.isDeleteConfirmationVisible();
+    await expect(visible, 'Confirmation modal must appear before deletion').toBeTruthy();
+    await listPage.cancelDeleteModal();
   });
 
 });

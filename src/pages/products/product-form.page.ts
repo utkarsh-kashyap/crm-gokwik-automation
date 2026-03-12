@@ -126,6 +126,15 @@ export class ProductFormPage extends BasePage {
   }
 
   /**
+   * Clicks the Create Product button without waiting for navigation.
+   * Useful for tests that mock network responses and should not wait for URL change.
+   */
+  async clickCreateButton(): Promise<void> {
+    await this.createProductButton.scrollIntoViewIfNeeded();
+    await this.safeClick(this.createProductButton, 'Create Product button (no wait)');
+  }
+
+  /**
    * Saves changes on an existing product (Save Changes button).
    * URL stays the same after save.
    */
